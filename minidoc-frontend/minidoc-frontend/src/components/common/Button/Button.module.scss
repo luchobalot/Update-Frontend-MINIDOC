@@ -1,0 +1,290 @@
+// src/components/common/Button/Button.module.scss
+@import '../../../styles/base/variables';
+@import '../../../styles/base/mixins';
+
+// ==================== BOTÓN BASE ====================
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid transparent;
+    border-radius: $border-radius-sm;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    font-weight: $font-semibold;
+    font-family: inherit;
+    text-decoration: none;
+    transition: all $transition;
+    white-space: nowrap;
+    position: relative;
+    outline: none;
+    
+    // Remover outline en todos los estados
+    &:focus,
+    &:focus-visible,
+    &:active {
+        outline: none;
+        box-shadow: none;
+    }
+}
+
+// ==================== VARIANTS ====================
+.btn--primary {
+    background: $primary-color;
+    color: $text-color;
+    border-color: $primary-color;
+
+    &:hover:not(.btn--disabled):not(.btn--loading) {
+        background: $primary-light;
+        border-color: $primary-light;
+    }
+
+    &:active {
+        background: $primary-dark;
+        border-color: $primary-dark;
+    }
+}
+
+.btn--secondary {
+    background: transparent;
+    color: $primary-color;
+    border-color: $primary-color;
+
+    &:hover:not(.btn--disabled):not(.btn--loading) {
+        background: $primary-color;
+        color: $text-color;
+    }
+
+    &:active {
+        background: $primary-light;
+    }
+}
+
+.btn--danger {
+    background: $error;
+    color: $text-color;
+    border-color: $error;
+
+    &:hover:not(.btn--disabled):not(.btn--loading) {
+        background: darken($error, 10%);
+        border-color: darken($error, 10%);
+    }
+
+    &:active {
+        background: darken($error, 15%);
+        border-color: darken($error, 15%);
+    }
+}
+
+.btn--outline-danger {
+    background: transparent;
+    color: $error;
+    border-color: $error;
+
+    &:hover:not(.btn--disabled):not(.btn--loading) {
+        background: $error;
+        color: $text-color;
+    }
+
+    &:active {
+        background: darken($error, 10%);
+    }
+}
+
+.btn--success {
+    background: $success;
+    color: $text-color;
+    border-color: $success;
+
+    &:hover:not(.btn--disabled):not(.btn--loading) {
+        background: darken($success, 10%);
+        border-color: darken($success, 10%);
+    }
+
+    &:active {
+        background: darken($success, 15%);
+        border-color: darken($success, 15%);
+    }
+}
+
+.btn--ghost {
+    background: transparent;
+    color: $text-light;
+    border-color: transparent;
+
+    &:hover:not(.btn--disabled):not(.btn--loading) {
+        background: rgba($primary-color, 0.1);
+        color: $primary-color;
+    }
+
+    &:active {
+        background: rgba($primary-color, 0.2);
+    }
+}
+
+// ==================== SIZES ====================
+.btn--sm {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.75rem;
+    gap: 0.375rem;
+}
+
+.btn--md {
+    padding: 0.75rem 1.25rem;
+    font-size: $font-size-sm;
+    gap: 0.5rem;
+}
+
+.btn--lg {
+    padding: 1rem 1.5rem;
+    font-size: $font-size-base;
+    gap: 0.625rem;
+}
+
+// ==================== ESTADOS ====================
+.btn--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn--loading {
+    cursor: wait;
+    pointer-events: none;
+    
+    .text {
+        opacity: 0;
+    }
+    
+    .icon {
+        opacity: 0;
+    }
+}
+
+.btn--full-width {
+    width: 100%;
+}
+
+// ==================== ELEMENTOS INTERNOS ====================
+.icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    
+    // Tamaños de iconos según el botón
+    .btn--sm & {
+        font-size: 0.875rem;
+        
+        svg {
+            width: 14px;
+            height: 14px;
+        }
+    }
+    
+    .btn--md & {
+        font-size: 1rem;
+        
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+    }
+    
+    .btn--lg & {
+        font-size: 1.125rem;
+        
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+}
+
+.text {
+    display: flex;
+    align-items: center;
+}
+
+// ==================== BOTÓN SOLO ICONO ====================
+.btn--icon-only {
+    padding: 0.75rem;
+    
+    &.btn--sm {
+        padding: 0.5rem;
+    }
+    
+    &.btn--lg {
+        padding: 1rem;
+    }
+}
+
+// ==================== ICONO A LA DERECHA ====================
+.btn--icon-right {
+    flex-direction: row-reverse;
+}
+
+// ==================== LOADING SPINNER ====================
+.loadingSpinner {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    
+    .btn--sm & {
+        width: 14px;
+        height: 14px;
+        border-width: 1.5px;
+    }
+    
+    .btn--lg & {
+        width: 18px;
+        height: 18px;
+        border-width: 2.5px;
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+// ==================== RESPONSIVE ====================
+@include mobile {
+    .btn {
+        padding: 0.625rem 1rem;
+        font-size: 0.75rem;
+    }
+    
+    .btn--sm {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.7rem;
+    }
+    
+    .btn--lg {
+        padding: 0.875rem 1.25rem;
+        font-size: $font-size-sm;
+    }
+}
+
+// ==================== HIGH CONTRAST MODE ====================
+@media (prefers-contrast: high) {
+    .btn {
+        border-width: 2px;
+        font-weight: $font-bold;
+    }
+}
+
+// ==================== PRINT STYLES ====================
+@media print {
+    .btn {
+        background: white !important;
+        color: black !important;
+        border: 2px solid black !important;
+    }
+}

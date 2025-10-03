@@ -1,0 +1,149 @@
+// src/pages/Usuarios/Usuarios.module.scss
+@import '../../styles/base/variables';
+@import '../../styles/base/mixins';
+
+// FORZAR SCROLL CORRECTO
+:global(body) {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+:global(html) {
+    overflow-y: auto !important;
+}
+
+// CONTENEDOR PRINCIPAL
+.usuariosContainer {
+    background: $bg-body;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+    padding-top: 60px;
+}
+
+.contentWrapper {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem 2rem 4rem;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: $spacing-xl;
+    
+    @include tablet {
+        grid-template-columns: 250px 1fr;
+        gap: $spacing-md;
+        padding: 2rem 1rem 4rem;
+    }
+    
+    @media (max-width: 1024px) {
+        grid-template-columns: 220px 1fr;
+        gap: $spacing-sm;
+        padding: 2rem 1rem 4rem;
+    }
+    
+    @include mobile {
+        grid-template-columns: 1fr;
+        padding: 2rem 1rem 4rem;
+        gap: $spacing-md;
+    }
+}
+
+// ÁREA DE CONTENIDO
+.contentArea {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+}
+
+// CONTENIDO PLACEHOLDER
+.placeholderContent {
+    @include card;
+    padding: 2rem;
+    text-align: center;
+    
+    h3 {
+        color: $text-color;
+        font-size: $font-size-lg;
+        font-weight: $font-semibold;
+        margin-bottom: $spacing-md;
+        @include flex-center;
+        justify-content: center;
+        gap: 0.5rem;
+        
+        &::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 1.5rem;
+            background: $primary-color;
+            border-radius: 2px;
+        }
+    }
+    
+    p {
+        color: $text-light;
+        font-size: $font-size-sm;
+        margin: 0;
+    }
+}
+
+// RESPONSIVE ESPECÍFICO
+@media screen and (max-width: 480px) {
+    .usuariosContainer {
+        padding-top: 50px;
+    }
+    
+    .contentWrapper {
+        padding: 1rem 0.5rem 4rem;
+        gap: $spacing-sm;
+    }
+    
+    .placeholderContent {
+        padding: 1.5rem;
+        
+        h3 {
+            font-size: $font-size-base;
+            margin-bottom: $spacing-sm;
+        }
+        
+        p {
+            font-size: 0.75rem;
+        }
+    }
+}
+
+// ANIMACIÓN
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.contentArea {
+    animation: slideInUp 0.4s ease-out;
+}
+
+// PRINT STYLES
+@media print {
+    .usuariosContainer {
+        background: white;
+        color: black;
+        padding-top: 0;
+    }
+    
+    .contentWrapper {
+        grid-template-columns: 1fr;
+        padding: 0;
+    }
+    
+    .placeholderContent {
+        background: white;
+        border: 1px solid black;
+        box-shadow: none;
+    }
+}

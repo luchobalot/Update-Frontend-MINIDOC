@@ -1,0 +1,322 @@
+// src/components/common/SearchBar/SearchBar.module.scss
+@import '../../../styles/base/variables';
+@import '../../../styles/base/mixins';
+
+// ==================== SEARCH CONTAINER ====================
+.searchContainer {
+    position: absolute !important;
+    left: calc(280px + 1.5rem) !important;
+    right: 2rem !important;
+    width: auto !important;
+    z-index: 10 !important;
+    margin: 0 0 $spacing-lg 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    
+    @include mobile {
+        left: 1rem !important;
+        right: 1rem !important;
+        width: auto !important;
+    }
+    
+    @media (min-width: 1920px) {
+        max-width: calc(1600px - 280px - 1.5rem) !important;
+    }
+}
+
+// ==================== SEARCH CARD ====================
+.searchCard {
+    background: $bg-container !important;
+    border: none !important;
+    border-radius: $border-radius-lg !important;
+    box-shadow: $shadow-md !important;
+    padding: $spacing-md !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    margin-left: $spacing-lg !important;
+}
+
+// ==================== SEARCH FORM ====================
+.searchForm {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: $spacing-xl !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    flex-wrap: nowrap !important;
+}
+
+// ==================== FORM GROUP ====================
+.formGroup {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    
+    &:first-child {
+        flex: 1 !important;
+        min-width: 300px !important;
+        max-width: none !important;
+        
+        @media (min-width: 1200px) {
+            flex: 1 !important;
+            min-width: 400px !important;
+        }
+    }
+    
+    &:not(:first-child) {
+        flex: 0 0 auto !important;
+        width: auto !important;
+    }
+}
+
+// ==================== INPUT WRAPPER ====================
+.inputWrapper {
+    position: relative !important;
+    width: 100% !important;
+    display: block !important;
+}
+
+// ==================== INPUTS ====================
+.input {
+    @include input-base;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    height: 42px !important;
+    padding-left: 42px !important;
+    padding-right: 42px !important;
+    margin: 0 !important;
+    font-size: $font-size-sm !important;
+    
+    .inputWrapper:has(.clearButton) & {
+        padding-right: 2.5rem;
+    }
+    
+    &[type="date"] {
+        width: 160px !important;
+        flex-shrink: 0 !important;
+        padding-left: 45px !important;
+        padding-right: 15px !important;
+        
+        &::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+            margin-left: 8px;
+        }
+        
+        @media (max-width: 1200px) {
+            width: 140px !important;
+            padding-left: 42px !important;
+        }
+    }
+    
+    &::placeholder {
+        color: $text-light !important;
+        font-size: $font-size-sm !important;
+    }
+    
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    &:focus,
+    &:focus-visible {
+        outline: none !important;
+        border-color: $primary-color !important;
+        box-shadow: 0 0 0 1px $primary-color !important;
+    }
+}
+
+// ==================== INPUT ICON ====================
+.inputIcon {
+    position: absolute !important;
+    left: 14px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: $text-light !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+    font-size: 16px !important;
+}
+
+// ==================== CLEAR BUTTON ====================
+.clearButton {
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 26px !important;
+    height: 26px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    color: $text-light !important;
+    cursor: pointer !important;
+    z-index: 2 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: $border-radius-sm !important;
+    min-width: auto !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    text-decoration: none !important;
+    
+    &:hover {
+        color: $primary-color !important;
+        background: rgba($primary-color, 0.1) !important;
+    }
+    
+    &:focus,
+    &:focus-visible {
+        outline: none !important;
+    }
+    
+    svg {
+        width: 14px !important;
+        height: 14px !important;
+    }
+}
+
+// ==================== DATE RANGE ====================
+.dateRange {
+    display: flex !important;
+    gap: $spacing-lg !important;
+    align-items: flex-start !important;
+    flex-shrink: 0 !important;
+    
+    .formGroup {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        
+        &:first-child,
+        &:not(:first-child) {
+            flex: 0 0 auto !important;
+            min-width: auto !important;
+        }
+    }
+}
+
+// ==================== SEARCH BUTTON ====================
+.searchButton {
+    flex: 0 0 auto !important;
+    width: 120px !important;
+    height: 42px !important;
+    margin: 0 !important;
+    padding: 0 $spacing-md !important;
+    white-space: nowrap !important;
+    min-width: 120px !important;
+    max-width: 120px !important;
+    
+    &:focus,
+    &:focus-visible {
+        outline: none !important;
+    }
+    
+    @media (max-width: 1200px) {
+        width: 100px !important;
+        min-width: 100px !important;
+        max-width: 100px !important;
+    }
+}
+
+// ==================== ERROR STYLES ====================
+.errorText {
+    color: $error !important;
+    font-size: $font-size-sm !important;
+    margin-top: $spacing-xs !important;
+    display: block !important;
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    white-space: nowrap !important;
+}
+
+.errorMessage {
+    color: $error !important;
+    background: rgba($error, 0.1) !important;
+    border: 1px solid rgba($error, 0.3) !important;
+    border-radius: $border-radius-sm !important;
+    padding: $spacing-sm !important;
+    margin-top: $spacing-sm !important;
+    width: 100% !important;
+    
+    &::before {
+        content: '⚠ ' !important;
+    }
+}
+
+// ==================== RESPONSIVE ====================
+@media (max-width: 1024px) {
+    .searchForm {
+        gap: $spacing-md !important;
+    }
+    
+    .formGroup:first-child {
+        flex: 1 !important;
+        min-width: 250px !important;
+    }
+    
+    .input[type="date"] {
+        width: 130px !important;
+        padding-left: 40px !important;
+    }
+    
+    .searchButton {
+        width: 90px !important;
+        min-width: 90px !important;
+        max-width: 90px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .searchForm {
+        flex-direction: column !important;
+        gap: $spacing-sm !important;
+    }
+    
+    .formGroup {
+        &:first-child {
+            width: 100% !important;
+            flex: none !important;
+            min-width: auto !important;
+        }
+    }
+    
+    .dateRange {
+        width: 100% !important;
+        
+        .formGroup {
+            flex: 1 !important;
+        }
+        
+        .input[type="date"] {
+            width: 100% !important;
+        }
+    }
+    
+    .searchButton {
+        width: 100% !important;
+        min-width: auto !important;
+        max-width: none !important;
+    }
+}
+
+// ==================== LOADING STATE ====================
+.searchForm {
+    &:has(.searchButton[disabled]) {
+        .input {
+            opacity: 0.7;
+        }
+        
+        .inputIcon {
+            opacity: 0.5;
+        }
+    }
+}

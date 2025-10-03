@@ -1,0 +1,124 @@
+// ==================== MIXINS ESENCIALES ====================
+
+// ==================== RESPONSIVE ====================
+@mixin mobile {
+    @media (max-width: #{$mobile - 1px}) {
+        @content;
+    }
+}
+
+@mixin tablet {
+    @media (max-width: #{$tablet - 1px}) {
+        @content;
+    }
+}
+
+@mixin desktop {
+    @media (min-width: $desktop) {
+        @content;
+    }
+}
+
+// ==================== FLEXBOX BÁSICO ====================
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin flex-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+// ==================== BOTONES ====================
+@mixin btn-base {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-md $spacing-lg;
+    border: none;
+    border-radius: $border-radius-sm;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    font-weight: $font-semibold;
+    transition: all $transition;
+    text-decoration: none;
+}
+
+@mixin btn-primary {
+    @include btn-base;
+    background: $primary-color;
+    color: $text-color;
+
+    &:hover {
+        background: $primary-light;
+    }
+}
+
+@mixin btn-secondary {
+    @include btn-base;
+    background: transparent;
+    color: $primary-color;
+    border: 1px solid $primary-color;
+
+    &:hover {
+        background: $primary-color;
+        color: $text-color;
+    }
+}
+
+// ==================== INPUTS ====================
+@mixin input-base {
+    width: 100%;
+    padding: $spacing-md;
+    background: $bg-input;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-sm;
+    color: $text-color;
+    font-size: $font-size-sm;
+    transition: border-color $transition;
+
+    &::placeholder {
+        color: $text-light;
+    }
+
+    &:focus {
+        outline: none;
+        border-color: $primary-color;
+    }
+}
+
+// ==================== CARDS ====================
+@mixin card {
+    background: $bg-container;
+    border-radius: $border-radius-lg;
+    box-shadow: $shadow-lg;
+    border: 1px solid $border-color;
+}
+
+// ==================== SCROLLBAR ====================
+@mixin custom-scrollbar {
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+        background: $bg-container;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+        background: $primary-color;
+        border-radius: 3px;
+        
+        &:hover {
+            background: $primary-light;
+        }
+    }
+}

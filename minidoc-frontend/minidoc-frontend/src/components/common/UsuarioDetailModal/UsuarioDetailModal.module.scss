@@ -1,0 +1,444 @@
+// src/components/common/PersonalDetailModal/PersonalDetailModal.module.scss
+@import '../../../styles/base/variables';
+@import '../../../styles/base/mixins';
+
+// ==================== MODAL OVERLAY ====================
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: $z-modal;
+  @include flex-center;
+  padding: 2rem 1rem;
+  backdrop-filter: blur(4px);
+  overflow-y: auto;
+}
+
+// ==================== MODAL CONTAINER ====================
+.modalContainer {
+  @include card;
+  width: 100%;
+  max-width: 900px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease-out;
+  background: $bg-container;
+  border: 1px solid $border-color;
+  overflow: hidden;
+  
+  @include tablet {
+    max-width: 95vw;
+    max-height: 90vh;
+  }
+  
+  @include mobile {
+    max-width: 95vw;
+    max-height: 90vh;
+    margin: 1rem 0;
+  }
+}
+
+// ==================== MODAL HEADER ====================
+.modalHeader {
+  background: $bg-dark;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid $border-color;
+  @include flex-between;
+  border-radius: $border-radius-lg $border-radius-lg 0 0;
+  
+  @include mobile {
+    padding: 0.875rem 1rem;
+  }
+}
+
+.headerContent {
+  @include flex-center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+}
+
+.headerIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba($primary-color, 0.2);
+  @include flex-center;
+  color: $primary-color;
+  
+  @include mobile {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+.headerText {
+  h2 {
+    color: $text-color;
+    font-size: 1.25rem;
+    font-weight: $font-semibold;
+    margin: 0;
+    
+    @include mobile {
+      font-size: 1.125rem;
+    }
+  }
+}
+
+.headerSubtitle {
+  color: $text-light;
+  font-size: 0.8rem;
+  font-weight: $font-medium;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: $text-light;
+  cursor: pointer;
+  padding: 0.375rem;
+  border-radius: $border-radius-sm;
+  transition: all $transition;
+  @include flex-center;
+  
+  &:hover {
+    color: $text-color;
+    background: rgba($border-color, 0.3);
+  }
+  
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
+// ==================== MODAL BODY ====================
+.modalBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+  @include custom-scrollbar;
+}
+
+// ==================== CONTENT GRID ====================
+.contentGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  
+  @include tablet {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ==================== SECTIONS ====================
+.section {
+  background: $bg-container;
+  border-right: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
+  transition: all $transition;
+  
+  &:hover {
+    background: rgba($primary-color, 0.02);
+  }
+  
+  // Eliminar borde derecho en columnas pares
+  &:nth-child(even) {
+    border-right: none;
+    
+    @include tablet {
+      border-right: none;
+    }
+  }
+  
+  // Eliminar borde inferior en las últimas filas
+  &:nth-last-child(-n+2) {
+    border-bottom: none;
+  }
+  
+  // En tablet/mobile, eliminar borde inferior solo del último elemento
+  @include tablet {
+    border-right: none;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    // Restablecer regla anterior en tablet
+    &:nth-last-child(-n+2) {
+      border-bottom: 1px solid $border-color;
+    }
+  }
+}
+
+.sectionTitle {
+  background: rgba($primary-color, 0.1);
+  color: $text-color;
+  font-size: 0.8rem;
+  font-weight: $font-semibold;
+  padding: 0.75rem 1.25rem;
+  margin: 0;
+  border-bottom: 1px solid $border-color;
+  @include flex-center;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  
+  i {
+    color: $primary-color;
+    font-size: 0.875rem;
+  }
+  
+  @include mobile {
+    padding: 0.625rem 1rem;
+    font-size: 0.75rem;
+    
+    i {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+.sectionContent {
+  padding: 1.25rem;
+  
+  @include mobile {
+    padding: 1rem;
+  }
+}
+
+// ==================== INFO ROWS ====================
+.infoRow {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 0.875rem;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid rgba($border-color, 0.3);
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+    padding: 0.5rem 0;
+  }
+}
+
+.label {
+  color: $text-light;
+  font-size: 0.8rem;
+  font-weight: $font-medium;
+  
+  @include mobile {
+    font-size: 0.75rem;
+  }
+}
+
+.value {
+  color: $text-color;
+  font-size: 0.8rem;
+  font-weight: $font-medium;
+  word-break: break-word;
+  
+  @include mobile {
+    font-size: 0.8rem;
+    margin-bottom: 0.375rem;
+  }
+  
+  &.booleanValue {
+    font-weight: $font-semibold;
+    font-size: 0.8rem;
+    
+    &.positive {
+      color: $success;
+    }
+    
+    &.negative {
+      color: $text-light;
+    }
+  }
+}
+
+// ==================== LOADING STATE ====================
+.loadingContainer {
+  @include flex-center;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 2.5rem 2rem;
+  color: $text-light;
+  
+  span {
+    font-size: 0.8rem;
+    font-weight: $font-medium;
+  }
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba($primary-color, 0.2);
+  border-top: 3px solid $primary-color;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+// ==================== ERROR STATE ====================
+.errorContainer {
+  @include flex-center;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+
+.errorIcon {
+  font-size: 2.5rem;
+  color: $error;
+}
+
+.errorContent {
+  h3 {
+    color: $text-color;
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  p {
+    color: $text-light;
+    font-size: 0.8rem;
+    margin-bottom: 1.25rem;
+  }
+}
+
+.retryButton {
+  @include btn-primary;
+  font-size: 0.8rem;
+  padding: 0.625rem 1.25rem;
+}
+
+// ==================== ANIMATIONS ====================
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes spin {
+  from { 
+    transform: rotate(0deg); 
+  }
+  to { 
+    transform: rotate(360deg); 
+  }
+}
+
+// ==================== RESPONSIVE ====================
+@media screen and (max-width: 640px) {
+  .modalOverlay {
+    padding: 1rem 0.5rem;
+  }
+  
+  .modalContainer {
+    margin: 0;
+    max-height: 95vh;
+    max-width: 100%;
+  }
+  
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .section {
+    border-right: none;
+  }
+  
+  .infoRow {
+    padding: 0.375rem 0;
+  }
+  
+  .sectionContent {
+    padding: 0.875rem;
+  }
+}
+
+// ==================== SCROLL OPTIMIZATIONS ====================
+@media screen and (max-height: 800px) {
+  .modalContainer {
+    max-height: 90vh;
+  }
+  
+  .sectionContent {
+    padding: 1rem;
+  }
+  
+  .infoRow {
+    padding: 0.5rem 0;
+  }
+}
+
+// ==================== HIGH CONTRAST ====================
+@media (prefers-contrast: high) {
+  .infoRow {
+    border-bottom: 2px solid $border-color;
+  }
+  
+  .value.booleanValue {
+    border: 1px solid currentColor;
+    padding: 0.125rem 0.375rem;
+    border-radius: $border-radius-sm;
+  }
+  
+  .section {
+    border-width: 2px;
+  }
+}
+
+// ==================== PRINT STYLES ====================
+@media print {
+  .modalOverlay {
+    position: static;
+    background: white;
+    padding: 0;
+  }
+  
+  .modalContainer {
+    background: white;
+    box-shadow: none;
+    border: 2px solid black;
+    max-width: none;
+    max-height: none;
+  }
+  
+  .modalHeader {
+    background: white;
+    color: black;
+    border-bottom: 2px solid black;
+  }
+  
+  .closeButton {
+    display: none;
+  }
+  
+  .section {
+    background: white;
+    border: 1px solid black;
+  }
+  
+  .sectionTitle {
+    background: #f5f5f5;
+    color: black;
+    
+    i {
+      color: black;
+    }
+  }
+}

@@ -1,0 +1,160 @@
+// ==================== SIDEBAR STYLES ====================
+@import '../../../styles/base/variables';
+@import '../../../styles/base/mixins';
+
+.sidebarSection {
+    @include flex-column;
+    gap: 0.75rem;
+    position: sticky;
+    top: 6rem;
+    height: fit-content;
+}
+
+.sectionCard {
+    @include card;
+    overflow: hidden;
+}
+
+.sectionHeader {
+    background: linear-gradient(90deg, $primary-color, $primary-light);
+    color: $text-color;
+    padding: 1rem 1.5rem;
+    @include flex-between;
+    
+    h3 {
+        font-size: $font-size-base;
+        font-weight: $font-semibold;
+        @include flex-center;
+        gap: 0.5rem;
+        margin: 0;
+    }
+}
+
+.sectionContent {
+    padding: 0.75rem;
+}
+
+// ==================== MENU ITEM STYLES - FORZAR CON ESPECIFICIDAD MÁXIMA ====================
+.sectionContent :global(.menu-item) {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0.75rem !important;
+    padding: 0.75rem 1rem !important;
+    margin: 0.25rem 0 !important;
+    border-radius: 0.25rem !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    font-size: 0.813rem !important;
+    font-weight: 500 !important;
+    color: #f1f5f9 !important;
+    position: relative !important;
+    border: none !important;
+    background: transparent !important;
+    text-decoration: none !important;
+    font-family: inherit !important;
+    
+    // HOVER
+    &:hover:not(.active) {
+        background: #2b4d98 !important;
+        color: #f1f5f9 !important;
+        transform: translateX(3px) !important;
+    }
+    
+    // FOCUS - Quitar outline cuando se hace clic
+    &:focus {
+        outline: none !important;
+    }
+    
+    // Solo mostrar outline cuando se navega con teclado
+    &:focus-visible {
+        outline: 2px solid #0055c3 !important;
+        outline-offset: 2px !important;
+    }
+    
+    // Iconos
+    i {
+        font-size: 1.125rem !important;
+        flex-shrink: 0 !important;
+        color: inherit !important;
+    }
+    
+    // Texto
+    span {
+        white-space: nowrap !important;
+        color: inherit !important;
+        
+        &:first-of-type {
+            flex: 1 !important;
+        }
+    }
+}
+
+// ==================== ESTADO ACTIVO - FORZAR CON MÁXIMA ESPECIFICIDAD ====================
+.sectionContent :global(.menu-item.active),
+.sectionContent :global(.menu-item[data-active="true"]) {
+    background-color: #0055c3 !important;
+    background: #0055c3 !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 2px 10px rgba(0, 85, 195, 0.3) !important;
+    border: none !important;
+    
+    // Línea lateral
+    &::before {
+        content: '' !important;
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 4px !important;
+        height: 100% !important;
+        background: #f1f5f9 !important;
+        border-radius: 0 2px 2px 0 !important;
+    }
+    
+    // Mantener estilos en hover cuando está activo
+    &:hover {
+        background-color: #0055c3 !important;
+        background: #0055c3 !important;
+        color: #f1f5f9 !important;
+        transform: translateX(3px) !important;
+    }
+    
+    // Iconos en estado activo
+    i {
+        color: #f1f5f9 !important;
+    }
+    
+    // Texto en estado activo
+    span {
+        color: #f1f5f9 !important;
+    }
+}
+
+// ==================== CONTADOR DE MENSAJES ====================
+.sectionContent :global(.menu-item-count) {
+    background: rgba(241, 245, 249, 0.2) !important;
+    color: #f1f5f9 !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    padding: 0.125rem 0.5rem !important;
+    border-radius: 10px !important;
+    min-width: 20px !important;
+    text-align: center !important;
+    margin-left: auto !important;
+}
+
+.sectionContent :global(.menu-item.active) :global(.menu-item-count) {
+    background: rgba(241, 245, 249, 0.3) !important;
+    color: #f1f5f9 !important;
+}
+
+// ==================== FALLBACK GLOBAL POR SI ACASO ====================
+:global(.menu-item.active) {
+    background-color: #0055c3 !important;
+    color: #f1f5f9 !important;
+}
+
+:global(div[data-active="true"]) {
+    background-color: #0055c3 !important;
+    color: #f1f5f9 !important;
+}

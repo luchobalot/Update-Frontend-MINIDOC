@@ -1,0 +1,70 @@
+// ==================== VARIABLES ESENCIALES ====================
+
+// ==================== COLORES ====================
+// Colores principales
+$primary-color: #2969bc;
+$primary-light: #1c4d8d;
+$primary-dark: #192a5a;
+
+// Colores de texto
+$text-color: #f1f5f9;
+$text-light: #c7c7c7;
+
+// Fondos
+$bg-body: #f8fafc;
+$bg-container: #0e1d35;
+$bg-dark: #0f172a;
+$bg-input: #192b54;
+
+// Estados
+$success: #059669;
+$error: #dc2626;
+$warning: #d97706;
+
+// Bordes
+$border-color: #475569;
+
+// ==================== TIPOGRAFÍA ====================
+$font-family: 'Poppins', sans-serif;
+$font-size-sm: 0.813rem;
+$font-size-base: 0.938rem;
+$font-size-lg: 1.25rem;
+
+$font-light: 400;
+$font-medium: 500;
+$font-semibold: 600;
+$font-bold: 700;
+
+// ==================== ESPACIADO ====================
+$spacing-xs: 0.25rem;
+$spacing-sm: 0.5rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+
+// ==================== BORDES Y RADIOS ====================
+$border-radius-sm: 0.25rem;
+$border-radius-md: 0.5rem;
+$border-radius-lg: 1rem;
+
+// ==================== TRANSICIONES ====================
+$transition: 0.3s ease;
+
+// ==================== BREAKPOINTS ====================
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+
+// ==================== ALTURAS COMUNES ====================
+$header-height: 3.5rem;
+$sidebar-width: 280px;
+
+// ==================== SOMBRAS ====================
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+// ==================== Z-INDEX ====================
+$z-header: 100;
+$z-modal: 500;
+$z-tooltip: 700;
