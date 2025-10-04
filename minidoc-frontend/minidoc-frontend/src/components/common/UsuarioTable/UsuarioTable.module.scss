@@ -300,23 +300,33 @@
   }
 }
 
-// ==================== COLUMN WIDTHS (SIMPLIFICADO - 4 COLUMNAS + ACCIONES) ====================
+// ==================== COLUMN WIDTHS ====================
 .colMr {
+  width: 120px;
+  min-width: 100px;
+}
+
+.colApellido {
+  width: 200px;
+  min-width: 160px;
+}
+
+.colNombre {
+  width: 200px;
+  min-width: 160px;
+}
+
+.colUsuario {
+  width: 160px;
+  min-width: 120px;
+}
+
+.colJerarquia {
   width: 180px;
   min-width: 150px;
 }
 
-.colApellido {
-  width: 280px;
-  min-width: 220px;
-}
-
-.colNombre {
-  width: 280px;
-  min-width: 220px;
-}
-
-.colJerarquia {
+.colDestino {
   width: 220px;
   min-width: 180px;
 }
@@ -362,6 +372,24 @@
 .jerarquiaText {
   color: $primary-color;
   font-weight: $font-semibold;
+  font-size: $font-size-sm;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ==================== USUARIO TEXT ====================
+.usuarioText {
+  color: $text-color;
+  font-weight: $font-medium;
+  font-size: $font-size-sm;
+  font-family: monospace;
+}
+
+// ==================== DESTINO TEXT ====================
+.destinoText {
+  color: $text-light;
+  font-weight: $font-medium;
   font-size: $font-size-sm;
   white-space: nowrap;
   overflow: hidden;

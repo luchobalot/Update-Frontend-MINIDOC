@@ -22,17 +22,25 @@ function UsuarioTable({
 
   // Función para obtener el nombre de la jerarquía
   const getJerarquiaName = (usuario) => {
-    // Si viene el objeto completo con nombre
     if (usuario.jerarquia?.nombre) {
       return usuario.jerarquia.nombre;
     }
-    // Si viene el objeto con iniciales
     if (usuario.jerarquia?.iniciales) {
       return usuario.jerarquia.iniciales;
     }
-    // Si solo viene el ID, buscar en lookups
     if (usuario.jerarquiaId) {
       return getDetailById('jerarquias', usuario.jerarquiaId) || `ID: ${usuario.jerarquiaId}`;
+    }
+    return 'Sin Información';
+  };
+
+  // Función para obtener el nombre del destino
+  const getDestinoName = (usuario) => {
+    if (usuario.destino?.nombre) {
+      return usuario.destino.nombre;
+    }
+    if (usuario.destinoId) {
+      return getDetailById('destinos', usuario.destinoId) || `ID: ${usuario.destinoId}`;
     }
     return 'Sin Información';
   };
@@ -66,12 +74,16 @@ function UsuarioTable({
     
     return data.filter(usuario => {
       const jerarquiaName = getJerarquiaName(usuario).toLowerCase();
+      const destinoName = getDestinoName(usuario).toLowerCase();
+      const userName = (usuario.logon || usuario.userName || '').toLowerCase();
       
       return (
         usuario.matriculaRevista?.toString().toLowerCase().includes(searchLower) ||
         usuario.apellido?.toLowerCase().includes(searchLower) ||
         usuario.nombre?.toLowerCase().includes(searchLower) ||
-        jerarquiaName.includes(searchLower)
+        userName.includes(searchLower) ||
+        jerarquiaName.includes(searchLower) ||
+        destinoName.includes(searchLower)
       );
     });
   }, [data, activeSearchTerm]);
@@ -100,10 +112,19 @@ function UsuarioTable({
         bVal = b.matriculaRevista || '';
       }
 
-      // Manejar jerarquia (puede venir como objeto o ID)
+      if (sortConfig.key === 'userName') {
+        aVal = a.logon || a.userName || '';
+        bVal = b.logon || b.userName || '';
+      }
+
       if (sortConfig.key === 'jerarquia') {
         aVal = getJerarquiaName(a);
         bVal = getJerarquiaName(b);
+      }
+
+      if (sortConfig.key === 'destino') {
+        aVal = getDestinoName(a);
+        bVal = getDestinoName(b);
       }
 
       // Convertir a string para comparación segura
@@ -165,7 +186,7 @@ function UsuarioTable({
               <input 
                 type="text" 
                 className={styles.searchInput}
-                placeholder="Buscar por MR, apellido, nombre o jerarquía..."
+                placeholder="Buscar por MR, apellido, nombre, usuario, jerarquía o destino..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -230,7 +251,7 @@ function UsuarioTable({
             <thead>
               <tr>
                 <SortableHeader sortKey="matriculaRevista" className={styles.colMr}>
-                  Matrícula de Revista
+                  MR
                 </SortableHeader>
                 <SortableHeader sortKey="apellido" className={styles.colApellido}>
                   Apellido
@@ -238,8 +259,14 @@ function UsuarioTable({
                 <SortableHeader sortKey="nombre" className={styles.colNombre}>
                   Nombre
                 </SortableHeader>
+                <SortableHeader sortKey="userName" className={styles.colUsuario}>
+                  Usuario
+                </SortableHeader>
                 <SortableHeader sortKey="jerarquia" className={styles.colJerarquia}>
                   Jerarquía
+                </SortableHeader>
+                <SortableHeader sortKey="destino" className={styles.colDestino}>
+                  Destino
                 </SortableHeader>
                 <th className={styles.colAcciones}>Acciones</th>
               </tr>
@@ -262,9 +289,19 @@ function UsuarioTable({
                       {usuario.nombre || 'N/A'}
                     </span>
                   </td>
+                  <td className={styles.colUsuario}>
+                    <span className={styles.usuarioText}>
+                      {usuario.logon || usuario.userName || 'N/A'}
+                    </span>
+                  </td>
                   <td className={styles.colJerarquia}>
                     <span className={styles.jerarquiaText}>
                       {getJerarquiaName(usuario)}
+                    </span>
+                  </td>
+                  <td className={styles.colDestino}>
+                    <span className={styles.destinoText}>
+                      {getDestinoName(usuario)}
                     </span>
                   </td>
                   <td className={styles.colAcciones}>

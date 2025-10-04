@@ -2,10 +2,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import apiClient from '../services/apiClient';
 
-/**
- * Hook para cargar lookups/catálogos desde el backend de MINIDOC
- * Endpoints: https://localhost:7043/api/{Entidad}
- */
 export const useLookups = () => {
   const [lookups, setLookups] = useState({
     jerarquias: [],
@@ -14,105 +10,41 @@ export const useLookups = () => {
     alcances: [],
     cuerpos: [],
     escalafones: [],
-    tiposClasificacion: []
+    tiposClasificacion: [],
+    estados: []
   });
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Función genérica para obtener datos de un endpoint
-  const fetchLookup = async (endpoint, entityName) => {
-    try {
-      console.log(`📥 Cargando ${entityName} desde /${endpoint}`);
-      const response = await apiClient.get(`/${endpoint}`);
-      console.log(`✅ ${entityName} cargados:`, response.data?.length || 0, 'registros');
-      return response.data || [];
-    } catch (error) {
-      console.error(`❌ Error al cargar ${entityName}:`, error);
-      return [];
-    }
-  };
-
-  // Cargar todos los datos de lookup
+  // Cargar todos los lookups con UNA SOLA llamada
   const fetchLookups = useCallback(async () => {
     setLoading(true);
     setError(null);
     
     try {
-      console.log('🔄 Iniciando carga de lookups desde MINIDOC API...');
+      console.log('🔄 Cargando lookups desde /api/Lookups/all...');
       
-      // Ejecutar todas las peticiones en paralelo
-      const [
-        jerarquias,
-        destinos,
-        niveles,
-        alcances,
-        cuerpos,
-        escalafones,
-        tiposClasificacion
-      ] = await Promise.all([
-        fetchLookup('Jerarquia', 'Jerarquías'),
-        fetchLookup('Destino', 'Destinos'),
-        fetchLookup('Nivel', 'Niveles'),
-        fetchLookup('Alcance', 'Alcances'),
-        fetchLookup('Cuerpo', 'Cuerpos'),
-        fetchLookup('Escalafon', 'Escalafones'),
-        fetchLookup('TipoClasificacion', 'Tipos de Clasificación')
-      ]);
+      // UNA SOLA LLAMADA al endpoint consolidado
+      const response = await apiClient.get('/Lookups/all');
+      
+      console.log('✅ Lookups cargados:', response.data);
 
-      // Normalizar datos (en caso de que vengan con diferentes estructuras)
-      const newLookups = {
-        jerarquias: jerarquias.map(item => ({
-          id: item.id || item.idJerarquia,
-          nombre: item.nombre,
-          iniciales: item.iniciales
-        })),
-        destinos: destinos.map(item => ({
-          id: item.id || item.idDestino,
-          nombre: item.nombre,
-          cuatrigrama: item.cuatrigrama,
-          nroDestino: item.nroDestino
-        })),
-        niveles: niveles.map(item => ({
-          id: item.id || item.idNivel,
-          nombre: item.nombre,
-          valor: item.valor
-        })),
-        alcances: alcances.map(item => ({
-          id: item.id || item.idAlcance,
-          nombre: item.nombre,
-          valor: item.valor
-        })),
-        cuerpos: cuerpos.map(item => ({
-          id: item.id || item.idCuerpo,
-          descripcion: item.descripcion,
-          detalle: item.detalle
-        })),
-        escalafones: escalafones.map(item => ({
-          id: item.id || item.idEscalafon || item.idEscalafo,
-          letra: item.letra,
-          descripcion: item.descripcion
-        })),
-        tiposClasificacion: tiposClasificacion.map(item => ({
-          id: item.id || item.idTipoClasificacion || item.idClasificacion,
-          descripcion: item.descripcion,
-          detalle: item.detalle
-        }))
-      };
-
-      console.log('✅ Lookups cargados exitosamente:', {
-        jerarquias: newLookups.jerarquias.length,
-        destinos: newLookups.destinos.length,
-        niveles: newLookups.niveles.length,
-        alcances: newLookups.alcances.length,
-        cuerpos: newLookups.cuerpos.length,
-        escalafones: newLookups.escalafones.length,
-        tiposClasificacion: newLookups.tiposClasificacion.length
+      // Normalizar los datos
+      setLookups({
+        jerarquias: response.data.jerarquias || [],
+        destinos: response.data.destinos || [],
+        niveles: response.data.niveles || [],
+        alcances: response.data.alcances || [],
+        cuerpos: response.data.cuerpos || [],
+        escalafones: response.data.escalafones || [],
+        tiposClasificacion: response.data.tiposClasificacion || [],
+        estados: response.data.estados || []
       });
 
-      setLookups(newLookups);
+      console.log('✅ Lookups procesados correctamente');
     } catch (err) {
-      console.error('❌ Error en fetchLookups:', err);
+      console.error('❌ Error al cargar lookups:', err);
       setError('Error al cargar datos de configuración');
     } finally {
       setLoading(false);
@@ -141,15 +73,19 @@ export const useLookups = () => {
     
     // Retornar el campo más apropiado según el tipo de lookup
     if (lookupType === 'jerarquias') {
-      return item.nombre || item.iniciales || '';
+      return item.nombre || item.iniciales || '';  // nombre = Detalle completo
     }
     
     if (lookupType === 'destinos') {
       return item.nombre || item.cuatrigrama || '';
     }
     
+    if (lookupType === 'cuerpos') {
+      return item.descripcion || '';  // descripcion = Detalle completo
+    }
+    
     if (lookupType === 'escalafones') {
-      return item.letra || item.descripcion || '';
+      return item.descripcion || item.letra || '';  // descripcion primero (Detalle)
     }
     
     // Para el resto, priorizar descripción o nombre
@@ -171,6 +107,7 @@ export const useLookups = () => {
       cuerpos: lookups.cuerpos.length,
       escalafones: lookups.escalafones.length,
       tiposClasificacion: lookups.tiposClasificacion.length,
+      estados: lookups.estados.length,
       total: Object.values(lookups).reduce((sum, arr) => sum + arr.length, 0)
     };
   }, [lookups]);

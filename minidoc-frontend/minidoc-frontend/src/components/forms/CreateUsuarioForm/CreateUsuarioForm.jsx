@@ -378,7 +378,7 @@ const CreateUsuarioForm = ({
                 touched={touched}
                 styles={styles}
                 getOptionId={(option) => option.id}
-                getOptionText={(option) => option.letra}
+                getOptionText={(option) => option.descripcion}
               />
             </FormField>
           </div>
