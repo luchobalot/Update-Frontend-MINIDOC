@@ -9,6 +9,10 @@
     margin-bottom: 2rem;
     padding: 1.5rem;
     @include card;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
     
     @include tablet {
         flex-direction: column;
@@ -26,6 +30,7 @@
 // ==================== TITLE SECTION ====================
 .titleSection {
     flex: 1;
+    min-width: 0;
     
     .title {
         color: $text-color;
@@ -52,6 +57,7 @@
             height: 1.5rem;
             background: $primary-color;
             border-radius: 2px;
+            flex-shrink: 0;
         }
     }
     
@@ -59,7 +65,7 @@
         color: $text-light;
         font-size: $font-size-sm;
         margin: 0;
-        margin-left: 1.25rem; // Alinear con el texto del título
+        margin-left: 1.25rem;
         
         @include tablet {
             margin-left: 0;
@@ -73,7 +79,7 @@
     
     .customContent {
         margin-top: $spacing-sm;
-        margin-left: 1.25rem; // Alinear con el texto del título
+        margin-left: 1.25rem;
         
         @include tablet {
             margin-left: 0;
@@ -86,6 +92,7 @@
     @include flex-center;
     gap: $spacing-md;
     flex-wrap: wrap;
+    flex-shrink: 0;
     
     @include tablet {
         width: 100%;
@@ -112,7 +119,6 @@
         }
     }
     
-    // Variantes de botones
     &.primary {
         @include btn-primary;
     }
@@ -160,11 +166,9 @@
         }
     }
     
-    // Iconos en botones
     i {
         font-size: 1rem;
         
-        // Si hay texto después del icono, agregar margen
         + span {
             margin-left: 0.375rem;
         }
@@ -259,7 +263,7 @@
     }
     
     .actionsSection {
-        display: none; // Ocultar botones en impresión
+        display: none;
     }
     
     .title {
