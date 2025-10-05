@@ -25,24 +25,60 @@ export const useLookups = () => {
     try {
       console.log('🔄 Cargando lookups desde /api/Lookups/all...');
       
-      // UNA SOLA LLAMADA al endpoint consolidado
       const response = await apiClient.get('/Lookups/all');
       
       console.log('✅ Lookups cargados:', response.data);
 
-      // Normalizar los datos
+      // ✅ NORMALIZAR DATOS - El backend puede devolver con diferentes nombres de propiedades
+      const normalizeArray = (arr) => {
+        if (!Array.isArray(arr)) return [];
+        
+        return arr.map(item => ({
+          // Normalizar id (puede venir como id, Id, idJerarquia, etc.)
+          id: item.id || item.idJerarquia || item.idDestino || item.idNivel || 
+              item.idCuerpo || item.idEscalafon || item.idTipoClasificacion || 
+              item.idEstado || item.idAlcance,
+          
+          // Normalizar nombre/descripción
+          nombre: item.nombre || item.detalle || item.descripcion,
+          
+          // Campos adicionales específicos
+          letra: item.letra,
+          sigla: item.sigla,
+          iniciales: item.iniciales,
+          detalle: item.detalle,
+          descripcion: item.descripcion,
+          cuatrigrama: item.cuatrigrama,
+          
+          // Preservar item original por si acaso
+          _original: item
+        }));
+      };
+
       setLookups({
-        jerarquias: response.data.jerarquias || [],
-        destinos: response.data.destinos || [],
-        niveles: response.data.niveles || [],
-        alcances: response.data.alcances || [],
-        cuerpos: response.data.cuerpos || [],
-        escalafones: response.data.escalafones || [],
-        tiposClasificacion: response.data.tiposClasificacion || [],
-        estados: response.data.estados || []
+        jerarquias: normalizeArray(response.data.jerarquias || []),
+        destinos: normalizeArray(response.data.destinos || []),
+        niveles: normalizeArray(response.data.niveles || []),
+        alcances: normalizeArray(response.data.alcances || []),
+        cuerpos: normalizeArray(response.data.cuerpos || []),
+        escalafones: normalizeArray(response.data.escalafones || []),
+        tiposClasificacion: normalizeArray(response.data.tiposClasificacion || []),
+        estados: normalizeArray(response.data.estados || [])
       });
 
       console.log('✅ Lookups procesados correctamente');
+      
+      // 🔍 DEBUG: Ver qué se cargó
+      console.log('📊 Cantidades cargadas:', {
+        jerarquias: normalizeArray(response.data.jerarquias || []).length,
+        destinos: normalizeArray(response.data.destinos || []).length,
+        niveles: normalizeArray(response.data.niveles || []).length,
+        cuerpos: normalizeArray(response.data.cuerpos || []).length,
+        escalafones: normalizeArray(response.data.escalafones || []).length,
+        tiposClasificacion: normalizeArray(response.data.tiposClasificacion || []).length,
+        estados: normalizeArray(response.data.estados || []).length
+      });
+
     } catch (err) {
       console.error('❌ Error al cargar lookups:', err);
       setError('Error al cargar datos de configuración');
@@ -73,19 +109,27 @@ export const useLookups = () => {
     
     // Retornar el campo más apropiado según el tipo de lookup
     if (lookupType === 'jerarquias') {
-      return item.nombre || item.iniciales || '';  // nombre = Detalle completo
+      return item.nombre || item.detalle || item.letra || '';
     }
     
     if (lookupType === 'destinos') {
       return item.nombre || item.cuatrigrama || '';
     }
     
+    if (lookupType === 'niveles') {
+      return item.nombre || item.descripcion || '';
+    }
+    
     if (lookupType === 'cuerpos') {
-      return item.descripcion || '';  // descripcion = Detalle completo
+      return item.descripcion || item.detalle || item.sigla || '';
     }
     
     if (lookupType === 'escalafones') {
-      return item.descripcion || item.letra || '';  // descripcion primero (Detalle)
+      return item.descripcion || item.detalle || item.letra || '';
+    }
+    
+    if (lookupType === 'tiposClasificacion') {
+      return item.descripcion || item.nombre || '';
     }
     
     // Para el resto, priorizar descripción o nombre

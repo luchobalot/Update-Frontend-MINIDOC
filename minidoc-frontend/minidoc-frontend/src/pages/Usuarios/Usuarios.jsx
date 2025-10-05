@@ -5,7 +5,7 @@ import UsuarioSidebar from '../../components/common/UsuarioSidebar';
 import ContentHeader from '../../components/common/ContentHeader';
 import Header from '../../components/layout/Header';
 import UsuarioDetailModal from '../../components/common/UsuarioDetailModal';
-import CreateUsuarioForm from '../../components/forms/CreateUsuarioForm';
+import CreateUsuarioFormMultiStep from '../../components/forms/CreateUsuarioForm/CreateUsuarioFormMultiStep';
 import { useUsuarios } from '../../hooks/useUsuarios';
 import { usuarioService } from '../../services/usuarioService';
 import styles from './Usuarios.module.scss';
@@ -71,41 +71,34 @@ function Usuarios() {
     console.log('Sección seleccionada:', sectionId);
   };
 
-  // Manejar creación de usuario
+  // ✅ MANEJAR CREACIÓN DE USUARIO CON VALIDACIÓN COMPLETA
   const handleCreateUsuario = async (usuarioData) => {
-    console.log('Creando usuario:', usuarioData);
-    setFormLoading(true);
+    console.log('📤 Iniciando creación de usuario:', usuarioData);
     
     try {
       const result = await usuarioService.create(usuarioData);
       
-      if (result.success) {
-        console.log('Usuario creado exitosamente:', result.data);
-        
-        // Mostrar mensaje de éxito
-        alert(`Usuario creado exitosamente:\n${usuarioData.nombre} ${usuarioData.apellido} (Username: ${usuarioData.logon})`);
-        
-        // Volver al listado
-        setActiveSection('listado-general');
-        
-        // Recargar la lista
-        refresh();
-      } else {
-        console.error('Error al crear usuario:', result.error);
-        alert(`Error al crear usuario:\n${result.error}`);
+      if (!result.success) {
+        throw new Error(result.error);
       }
+      
+      console.log('✅ Usuario creado exitosamente:', result.data);
+      
+      await refresh();
+      
     } catch (error) {
-      console.error('Error inesperado:', error);
-      alert('Error inesperado al crear el usuario. Intente nuevamente.');
-    } finally {
-      setFormLoading(false);
+      console.error('❌ Error capturado en handleCreateUsuario:', error);
+      throw error;
     }
   };
 
   // Manejar cancelación del formulario
   const handleCancelForm = () => {
     console.log('Cancelando formulario...');
-    setActiveSection('listado-general');
+    
+    if (window.confirm('¿Está seguro que desea cancelar? Se perderán los datos ingresados.')) {
+      setActiveSection('listado-general');
+    }
   };
 
   const getHeaderConfig = () => {
@@ -153,7 +146,7 @@ function Usuarios() {
       case 'agregar-usuario':
         return {
           title: 'Agregar Nuevo Usuario',
-          description: 'Complete la información del usuario',
+          description: 'Complete el formulario para registrar un nuevo usuario en el sistema MINIDOC'
         };
 
       case 'modificar-usuario':
@@ -174,10 +167,10 @@ function Usuarios() {
           description: 'Monitoreo de accesos al sistema'
         };
 
-      case 'usuarios-nivel':
+      case 'usuario-organica':
         return {
-          title: 'Usuarios por Nivel',
-          description: 'Consulta de usuarios agrupados por nivel de acceso'
+          title: 'Usuario en Orgánica',
+          description: 'Vista organizacional de usuarios'
         };
 
       case 'estructura-jerarquica':
@@ -219,7 +212,7 @@ function Usuarios() {
       
       case 'agregar-usuario':
         return (
-          <CreateUsuarioForm
+          <CreateUsuarioFormMultiStep
             onSubmit={handleCreateUsuario}
             onCancel={handleCancelForm}
             loading={formLoading}
@@ -231,6 +224,14 @@ function Usuarios() {
           <div className={styles.placeholderContent}>
             <h3>Modificar Usuario</h3>
             <p>Funcionalidad de modificación próximamente...</p>
+          </div>
+        );
+
+      case 'movimientos':
+        return (
+          <div className={styles.placeholderContent}>
+            <h3>Movimientos</h3>
+            <p>Historial de cambios y movimientos próximamente...</p>
           </div>
         );
 
@@ -250,11 +251,11 @@ function Usuarios() {
           </div>
         );
 
-      case 'usuarios-nivel':
+      case 'usuario-organica':
         return (
           <div className={styles.placeholderContent}>
-            <h3>Usuarios por Nivel</h3>
-            <p>Funcionalidad de consulta por nivel próximamente...</p>
+            <h3>Usuario en Orgánica</h3>
+            <p>Vista organizacional de usuarios próximamente...</p>
           </div>
         );
 
@@ -298,14 +299,13 @@ function Usuarios() {
         />
 
         <div className={styles.contentArea}>
-          {activeSection !== 'agregar-usuario' && (
-            <ContentHeader
-              title={headerConfig.title}
-              description={headerConfig.description}
-              actions={headerConfig.actions}
-              loading={loading}
-            />
-          )}
+          {/* ✅ CONTENT HEADER SIEMPRE SE MUESTRA */}
+          <ContentHeader
+            title={headerConfig.title}
+            description={headerConfig.description}
+            actions={headerConfig.actions}
+            loading={loading}
+          />
           
           {renderContent()}
         </div>
