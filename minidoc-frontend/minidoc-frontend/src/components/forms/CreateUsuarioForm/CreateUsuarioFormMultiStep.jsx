@@ -2,17 +2,14 @@
 import React, { useState } from 'react';
 import { useLookups } from '../../../hooks/useLookups';
 import styles from './CreateUsuarioFormMultiStep.module.scss';
+import { usuarioService } from '../../../services/usuarioService';
 
-const CreateUsuarioFormMultiStep = ({ 
-  onSubmit, 
-  onCancel, 
-  loading = false 
-}) => {
+const CreateUsuarioFormMultiStep = ({ onSubmit, onCancel, loading = false }) => {
   const { lookups, loading: lookupsLoading, error: lookupsError, refresh } = useLookups();
   
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 5;
-  
+
   const [formData, setFormData] = useState({
     matriculaRevista: '',
     apellido: '',
@@ -30,6 +27,8 @@ const CreateUsuarioFormMultiStep = ({
     passwordConfirmation: ''
   });
 
+  
+
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [showSuccess, setShowSuccess] = useState(false);
@@ -42,33 +41,27 @@ const CreateUsuarioFormMultiStep = ({
       case 'matriculaRevista':
         if (!/^\d{7}$/.test(value)) return 'Debe tener exactamente 7 dígitos';
         return '';
-      
       case 'apellido':
       case 'nombre':
         if (!value?.trim()) return 'Este campo es obligatorio';
         return '';
-      
       case 'jerarquiaId':
       case 'nivelId':
       case 'idTipoClasificacion':
         if (!value) return 'Este campo es obligatorio';
         return '';
-      
       case 'userName':
         if (!value?.trim()) return 'El nombre de usuario es obligatorio';
         if (value.length < 3) return 'Debe tener al menos 3 caracteres';
         return '';
-      
       case 'password':
         if (!value) return 'La contraseña es obligatoria';
         if (value.length < 6) return 'Debe tener al menos 6 caracteres';
         return '';
-      
       case 'passwordConfirmation':
         if (!value) return 'Debe confirmar la contraseña';
         if (value !== formData.password) return 'Las contraseñas no coinciden';
         return '';
-      
       default:
         return '';
     }
@@ -108,7 +101,6 @@ const CreateUsuarioFormMultiStep = ({
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
@@ -124,7 +116,6 @@ const CreateUsuarioFormMultiStep = ({
 
   const handleBlur = (e) => {
     const { name, value } = e.target;
-    
     setTouched(prev => ({ ...prev, [name]: true }));
     setErrors(prev => ({
       ...prev,
@@ -144,45 +135,43 @@ const CreateUsuarioFormMultiStep = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateStep(4)) {
-      return;
-    }
+    if (!validateStep(4)) return;
 
     setSubmitting(true);
     setShowError(false);
     setErrorMessage('');
 
     try {
-      const dataToSubmit = {
-        logon: formData.userName.trim(),
-        password: formData.password,
-        passwordConfirmation: formData.passwordConfirmation,
-        matriculaRevista: formData.matriculaRevista,
-        apellido: formData.apellido.trim(),
-        nombre: formData.nombre.trim(),
-        jerarquiaId: parseInt(formData.jerarquiaId, 10),
-        destinoId: formData.destinoId ? parseInt(formData.destinoId, 10) : null,
-        nivelId: parseInt(formData.nivelId, 10),
-        idTipoClasificacion: parseInt(formData.idTipoClasificacion, 10),
-        idEscalafon: formData.idEscalafon ? parseInt(formData.idEscalafon, 10) : null,
-        idCuerpo: formData.idCuerpo ? parseInt(formData.idCuerpo, 10) : null,
-        confianza: formData.confianza,
-        superConfianza: formData.superConfianza
+      // Nuevo flujo: el backend de MINIDOC crea todo (Auth + Minidoc)
+      const payload = {
+        Logon: formData.userName.trim(),
+        Password: formData.password,
+        PasswordConfirmation: formData.passwordConfirmation,
+        MatriculaRevista: formData.matriculaRevista,
+        Apellido: formData.apellido.trim(),
+        Nombre: formData.nombre.trim(),
+        JerarquiaId: parseInt(formData.jerarquiaId, 10),
+        DestinoId: formData.destinoId ? parseInt(formData.destinoId, 10) : null,
+        NivelId: parseInt(formData.nivelId, 10),
+        IdTipoClasificacion: parseInt(formData.idTipoClasificacion, 10),
+        IdEscalafon: formData.idEscalafon ? parseInt(formData.idEscalafon, 10) : null,
+        IdCuerpo: formData.idCuerpo ? parseInt(formData.idCuerpo, 10) : null,
+        Confianza: formData.confianza,
+        SuperConfianza: formData.superConfianza
       };
 
-      if (onSubmit) {
-        await onSubmit(dataToSubmit);
+      const result = await usuarioService.create(payload);
+
+      if (!result.success) {
+        throw new Error(result.error || 'Error al registrar usuario en MINIDOC.');
       }
-      
+
       setShowSuccess(true);
-      
     } catch (error) {
+      console.error('❌ Error en creación de usuario:', error);
       setShowError(true);
       setErrorMessage(
-        error.message || 
-        error.firstErrorMessage || 
-        'Error al crear el usuario. Por favor, intente nuevamente.'
+        error.message || 'Error al crear el usuario. Por favor, intente nuevamente.'
       );
     } finally {
       setSubmitting(false);
@@ -214,54 +203,24 @@ const CreateUsuarioFormMultiStep = ({
     setErrorMessage('');
   };
 
-  const getSelectText = (lookupType, id) => {
-    if (!id) return 'No especificado';
-    const items = lookups[lookupType] || [];
-    const item = items.find(i => i.id === parseInt(id));
-    
-    if (!item) return 'No especificado';
-    
-    return item.nombre || item.descripcion || item.detalle || 'No especificado';
+  const getSelectText = (key, id) => {
+    const list = lookups?.[key];
+    if (!Array.isArray(list)) return '';
+    const found = list.find(item => item.id === Number(id));
+    return found ? (found.nombre || found.descripcion || '') : '';
   };
 
-  if (lookupsLoading) {
-    return (
-      <div className={styles.formContainer}>
-        <div className={styles.loadingState}>
-          <div className={styles.spinner}></div>
-          <span>Cargando datos del formulario...</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (lookupsError) {
-    return (
-      <div className={styles.formContainer}>
-        <div className={styles.errorState}>
-          <i className='bx bx-error-circle'></i>
-          <h3>Error al cargar datos</h3>
-          <p>{lookupsError}</p>
-          <button onClick={refresh} className={styles.btnPrimary}>
-            <i className='bx bx-refresh'></i>
-            Reintentar
-          </button>
-        </div>
-      </div>
-    );
-  }
+  if (lookupsLoading) return <p>Cargando datos...</p>;
+  if (lookupsError) return <p>Error al cargar datos: {lookupsError}</p>;
 
   if (showSuccess) {
     return (
       <div className={styles.formContainer}>
         <div className={styles.successMessage}>
-          <div className={styles.successIcon}>
-            <i className='bx bx-check'></i>
-          </div>
-          <h3 className={styles.successTitle}>¡Usuario Creado Exitosamente!</h3>
-          <p className={styles.successText}>El usuario ha sido registrado correctamente en el sistema.</p>
+          <i className='bx bx-check'></i>
+          <h3>¡Usuario Creado Exitosamente!</h3>
+          <p>El usuario ha sido registrado correctamente en el sistema.</p>
           <button onClick={handleReset} className={styles.btnPrimary}>
-            <i className='bx bx-plus'></i>
             Crear Otro Usuario
           </button>
         </div>
