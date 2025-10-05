@@ -9,6 +9,8 @@
     margin-bottom: 2rem;
     padding: 1.5rem;
     @include card;
+    // ✅ QUITAR width: 100% o width: calc(...)
+    box-sizing: border-box;
     
     @include tablet {
         flex-direction: column;

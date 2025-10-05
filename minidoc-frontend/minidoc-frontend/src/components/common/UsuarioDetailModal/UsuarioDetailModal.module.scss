@@ -1,4 +1,4 @@
-// src/components/common/PersonalDetailModal/PersonalDetailModal.module.scss
+// src/components/common/UsuarioDetailModal/UsuarioDetailModal.module.scss
 @import '../../../styles/base/variables';
 @import '../../../styles/base/mixins';
 
@@ -10,35 +10,154 @@
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.6);
-  z-index: $z-modal;
+  z-index: 1002;
   @include flex-center;
-  padding: 2rem 1rem;
+  padding: 1rem;
   backdrop-filter: blur(4px);
   overflow-y: auto;
+  
+  // ✅ Animación de entrada
+  animation: fadeIn 0.25s ease-out;
+  
+  // ✅ Animación de salida
+  &.closing {
+    animation: fadeOut 0.2s ease-in forwards;
+  }
 }
 
 // ==================== MODAL CONTAINER ====================
 .modalContainer {
   @include card;
   width: 100%;
-  max-width: 900px;
-  max-height: 85vh;
+  max-width: 850px;
+  max-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
-  animation: slideUp 0.3s ease-out;
   background: $bg-container;
   border: 1px solid $border-color;
   overflow: hidden;
+  margin-top: 70px;
+  
+  // ✅ Animación de entrada
+  animation: slideUpScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  // ✅ Animación de salida
+  .modalOverlay.closing & {
+    animation: slideDownScale 0.2s ease-in forwards;
+  }
   
   @include tablet {
     max-width: 95vw;
-    max-height: 90vh;
+    max-height: calc(100vh - 70px);
+    margin-top: 60px;
   }
   
   @include mobile {
     max-width: 95vw;
-    max-height: 90vh;
-    margin: 1rem 0;
+    max-height: calc(100vh - 60px);
+    margin: 60px 0.5rem 0.5rem;
+  }
+}
+
+// ==================== ANIMACIONES ====================
+
+// Fade in del overlay
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// Fade out del overlay
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+// Slide up con escala (entrada)
+@keyframes slideUpScale {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// Slide down con escala (salida)
+@keyframes slideDownScale {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+}
+
+// ✅ Animación de contenido con delay
+.section {
+  background: $bg-container;
+  border-right: 1px solid $border-color;
+  border-bottom: 1px solid $border-color;
+  transition: all $transition;
+  
+  // Animación escalonada para cada sección
+  animation: fadeInUp 0.4s ease-out backwards;
+  
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.15s; }
+  &:nth-child(3) { animation-delay: 0.2s; }
+  &:nth-child(4) { animation-delay: 0.25s; }
+  
+  &:hover {
+    background: rgba($primary-color, 0.02);
+  }
+  
+  &:nth-child(even) {
+    border-right: none;
+    
+    @include tablet {
+      border-right: none;
+    }
+  }
+  
+  &:nth-last-child(-n+2) {
+    border-bottom: none;
+  }
+  
+  @include tablet {
+    border-right: none;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &:nth-last-child(-n+2) {
+      border-bottom: 1px solid $border-color;
+    }
+  }
+}
+
+// Fade in con slide up para secciones
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -49,6 +168,7 @@
   border-bottom: 1px solid $border-color;
   @include flex-between;
   border-radius: $border-radius-lg $border-radius-lg 0 0;
+  flex-shrink: 0;
   
   @include mobile {
     padding: 0.875rem 1rem;
@@ -59,6 +179,8 @@
   @include flex-center;
   justify-content: flex-start;
   gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .headerIcon {
@@ -68,6 +190,10 @@
   background: rgba($primary-color, 0.2);
   @include flex-center;
   color: $primary-color;
+  flex-shrink: 0;
+  
+  // ✅ Animación sutil del icono
+  animation: iconPulse 0.6s ease-out;
   
   @include mobile {
     width: 36px;
@@ -75,23 +201,49 @@
   }
 }
 
+// Pulse del icono
+@keyframes iconPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .headerText {
+  flex: 1;
+  min-width: 0;
+  
   h2 {
     color: $text-color;
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: $font-semibold;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     
     @include mobile {
-      font-size: 1.125rem;
+      font-size: 1rem;
     }
   }
 }
 
 .headerSubtitle {
   color: $text-light;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: $font-medium;
+  display: block;
+  margin-top: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .closeButton {
@@ -103,10 +255,12 @@
   border-radius: $border-radius-sm;
   transition: all $transition;
   @include flex-center;
+  flex-shrink: 0;
   
   &:hover {
     color: $text-color;
     background: rgba($border-color, 0.3);
+    transform: rotate(90deg); // ✅ Rotación sutil al hover
   }
   
   &:focus {
@@ -119,6 +273,7 @@
 .modalBody {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 0;
   @include custom-scrollbar;
 }
@@ -135,51 +290,12 @@
 }
 
 // ==================== SECTIONS ====================
-.section {
-  background: $bg-container;
-  border-right: 1px solid $border-color;
-  border-bottom: 1px solid $border-color;
-  transition: all $transition;
-  
-  &:hover {
-    background: rgba($primary-color, 0.02);
-  }
-  
-  // Eliminar borde derecho en columnas pares
-  &:nth-child(even) {
-    border-right: none;
-    
-    @include tablet {
-      border-right: none;
-    }
-  }
-  
-  // Eliminar borde inferior en las últimas filas
-  &:nth-last-child(-n+2) {
-    border-bottom: none;
-  }
-  
-  // En tablet/mobile, eliminar borde inferior solo del último elemento
-  @include tablet {
-    border-right: none;
-    
-    &:last-child {
-      border-bottom: none;
-    }
-    
-    // Restablecer regla anterior en tablet
-    &:nth-last-child(-n+2) {
-      border-bottom: 1px solid $border-color;
-    }
-  }
-}
-
 .sectionTitle {
   background: rgba($primary-color, 0.1);
   color: $text-color;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: $font-semibold;
-  padding: 0.75rem 1.25rem;
+  padding: 0.875rem 1.25rem;
   margin: 0;
   border-bottom: 1px solid $border-color;
   @include flex-center;
@@ -188,15 +304,16 @@
   
   i {
     color: $primary-color;
-    font-size: 0.875rem;
+    font-size: 1rem;
+    flex-shrink: 0;
   }
   
   @include mobile {
-    padding: 0.625rem 1rem;
-    font-size: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.813rem;
     
     i {
-      font-size: 0.8rem;
+      font-size: 0.875rem;
     }
   }
 }
@@ -212,10 +329,11 @@
 // ==================== INFO ROWS ====================
 .infoRow {
   display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 0.875rem;
-  padding: 0.625rem 0;
+  grid-template-columns: 140px 1fr;
+  gap: 1rem;
+  padding: 0.75rem 0;
   border-bottom: 1px solid rgba($border-color, 0.3);
+  align-items: center;
   
   &:last-child {
     border-bottom: none;
@@ -223,14 +341,14 @@
   
   @include mobile {
     grid-template-columns: 1fr;
-    gap: 0.25rem;
-    padding: 0.5rem 0;
+    gap: 0.375rem;
+    padding: 0.625rem 0;
   }
 }
 
 .label {
   color: $text-light;
-  font-size: 0.8rem;
+  font-size: 0.813rem;
   font-weight: $font-medium;
   
   @include mobile {
@@ -240,18 +358,17 @@
 
 .value {
   color: $text-color;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   font-weight: $font-medium;
   word-break: break-word;
   
   @include mobile {
-    font-size: 0.8rem;
-    margin-bottom: 0.375rem;
+    font-size: 0.813rem;
   }
   
   &.booleanValue {
     font-weight: $font-semibold;
-    font-size: 0.8rem;
+    font-size: 0.813rem;
     
     &.positive {
       color: $success;
@@ -268,11 +385,11 @@
   @include flex-center;
   flex-direction: column;
   gap: 1rem;
-  padding: 2.5rem 2rem;
+  padding: 3rem 2rem;
   color: $text-light;
   
   span {
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     font-weight: $font-medium;
   }
 }
@@ -291,7 +408,7 @@
   @include flex-center;
   flex-direction: column;
   gap: 1.25rem;
-  padding: 2.5rem 2rem;
+  padding: 3rem 2rem;
   text-align: center;
 }
 
@@ -309,29 +426,18 @@
   
   p {
     color: $text-light;
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     margin-bottom: 1.25rem;
   }
 }
 
 .retryButton {
   @include btn-primary;
-  font-size: 0.8rem;
+  font-size: 0.875rem;
   padding: 0.625rem 1.25rem;
 }
 
-// ==================== ANIMATIONS ====================
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
+// ==================== SPIN ANIMATION ====================
 @keyframes spin {
   from { 
     transform: rotate(0deg); 
@@ -341,28 +447,19 @@
   }
 }
 
-// ==================== RESPONSIVE ====================
+// ==================== RESPONSIVE ESPECÍFICO ====================
 @media screen and (max-width: 640px) {
   .modalOverlay {
-    padding: 1rem 0.5rem;
+    padding: 0.5rem;
   }
   
   .modalContainer {
-    margin: 0;
-    max-height: 95vh;
-    max-width: 100%;
-  }
-  
-  .contentGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .section {
-    border-right: none;
+    margin: 60px 0.25rem 0.25rem;
+    max-height: calc(100vh - 65px);
   }
   
   .infoRow {
-    padding: 0.375rem 0;
+    padding: 0.5rem 0;
   }
   
   .sectionContent {
@@ -370,10 +467,9 @@
   }
 }
 
-// ==================== SCROLL OPTIMIZATIONS ====================
 @media screen and (max-height: 800px) {
   .modalContainer {
-    max-height: 90vh;
+    max-height: calc(100vh - 70px);
   }
   
   .sectionContent {
@@ -381,7 +477,37 @@
   }
   
   .infoRow {
-    padding: 0.5rem 0;
+    padding: 0.625rem 0;
+  }
+}
+
+@media screen and (max-height: 700px) {
+  .modalContainer {
+    max-height: calc(100vh - 65px);
+    margin-top: 65px;
+  }
+  
+  .modalHeader {
+    padding: 0.75rem 1rem;
+  }
+  
+  .sectionContent {
+    padding: 0.875rem;
+  }
+}
+
+// ==================== REDUCCIÓN DE MOVIMIENTO ====================
+@media (prefers-reduced-motion: reduce) {
+  .modalOverlay,
+  .modalContainer,
+  .section,
+  .headerIcon,
+  .closeButton {
+    animation: none !important;
+  }
+  
+  .closeButton:hover {
+    transform: none !important;
   }
 }
 
@@ -416,6 +542,7 @@
     border: 2px solid black;
     max-width: none;
     max-height: none;
+    margin: 0;
   }
   
   .modalHeader {

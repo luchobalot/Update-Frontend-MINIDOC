@@ -230,14 +230,17 @@
 
 // ==================== TABLE CONTAINER ====================
 .tableContainer {
-  @include card;
-  overflow: hidden;
-  height: 600px;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
+    @include card;
+    overflow: hidden;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    // ✅ QUITAR width: 100% o width: calc(...)
+    box-sizing: border-box;
+    
+    @include mobile {
+        width: 100%; // En mobile sí usar 100%
+    }
 }
 
 .tableWrapper {

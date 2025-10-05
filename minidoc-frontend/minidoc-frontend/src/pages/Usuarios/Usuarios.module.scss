@@ -19,6 +19,8 @@
     position: relative;
     z-index: 1;
     padding-top: 60px;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .contentWrapper {
@@ -28,7 +30,6 @@
     display: grid;
     grid-template-columns: 280px minmax(0, 1fr);
     gap: $spacing-xl;
-    overflow: hidden;
     
     @include tablet {
         grid-template-columns: 250px minmax(0, 1fr);
@@ -55,7 +56,14 @@
     flex-direction: column;
     gap: $spacing-md;
     min-width: 0;
-    overflow: hidden;
+    padding: 12px; // ✅ ESPACIO PARA SOMBRAS EN TODOS LOS LADOS
+    margin: -12px; // ✅ COMPENSAR PARA NO AFECTAR LAYOUT
+    animation: slideInUp 0.4s ease-out;
+    
+    @include mobile {
+        padding: 8px;
+        margin: -8px;
+    }
 }
 
 // CONTENIDO PLACEHOLDER
@@ -125,10 +133,6 @@
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.contentArea {
-    animation: slideInUp 0.4s ease-out;
 }
 
 // PRINT STYLES

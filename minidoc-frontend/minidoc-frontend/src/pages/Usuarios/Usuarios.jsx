@@ -24,12 +24,12 @@ function Usuarios() {
   const [formLoading, setFormLoading] = useState(false);
 
   const handleView = (usuario) => {
-    console.log('Abriendo modal para:', usuario);
-    setModalState({
-      isOpen: true,
-      usuarioId: usuario.id
-    });
-  };
+  console.log('Abriendo modal para:', usuario);
+  setModalState({
+    isOpen: true,
+    usuarioId: usuario.idUsuarioMinidoc || usuario.id
+  });
+};
 
   const handleCloseModal = () => {
     setModalState({
@@ -106,7 +106,7 @@ function Usuarios() {
       case 'listado-general':
         return {
           title: 'Listado General de Usuarios',
-          description: 'Consulta y gestión de usuarios del sistema',
+          description: 'Consulta y gestión de usuarios del sistema MINIDOC',
           actions: [
             {
               label: 'Nuevo Usuario',

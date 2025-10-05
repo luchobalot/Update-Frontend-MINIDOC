@@ -13,54 +13,50 @@ const UsuarioDetailModal = ({
   const [usuarioData, setUsuarioData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isClosing, setIsClosing] = useState(false);
   
-  // Hook para obtener nombres de lookups
   const { getDetailById, getLookupById } = useLookups();
 
-  // Fetch data cuando se abre el modal
   useEffect(() => {
     if (isOpen && usuarioId) {
+      setIsClosing(false);
       fetchUsuarioDetails();
-    } else {
-      // Limpiar datos cuando se cierra
+    } else if (!isOpen) {
       setUsuarioData(null);
       setError(null);
     }
   }, [isOpen, usuarioId]);
 
-  // Fetch detalles del usuario
   const fetchUsuarioDetails = async () => {
     setLoading(true);
     setError(null);
     
     try {
-      console.log(`📥 Cargando detalles para Usuario ID: ${usuarioId}`);
-      
       const result = await usuarioService.getById(usuarioId);
       
       if (result.success) {
         setUsuarioData(result.data);
-        console.log('✅ Datos del usuario cargados:', result.data);
       } else {
         setError(result.error);
-        console.error('❌ Error:', result.error);
       }
     } catch (err) {
       setError('Error inesperado al cargar los datos');
-      console.error('❌ Error inesperado:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Cerrar modal
   const handleClose = () => {
-    if (onClose) {
-      onClose();
-    }
+    setIsClosing(true);
+    
+    setTimeout(() => {
+      if (onClose) {
+        onClose();
+      }
+      setIsClosing(false);
+    }, 200);
   };
 
-  // Manejar tecla ESC
   useEffect(() => {
     const handleEsc = (e) => {
       if (e.key === 'Escape' && isOpen) {
@@ -79,37 +75,29 @@ const UsuarioDetailModal = ({
     };
   }, [isOpen]);
 
-  // Click en overlay para cerrar
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
       handleClose();
     }
   };
 
-  // Obtener nombre del lookup por ID
   const getLookupName = (lookupType, id, fallback = 'No especificado') => {
     if (!id) return fallback;
     const name = getDetailById(lookupType, id);
     return name || fallback;
   };
 
-  // Obtener lookup completo
   const getLookup = (lookupType, id) => {
     if (!id) return null;
     return getLookupById(lookupType, id);
   };
 
-  // Renderizar información con formato mejorado
   const InfoRow = ({ label, value, type = 'text' }) => {
     let displayValue = value;
     
-    // Formatear según el tipo
     switch (type) {
       case 'boolean':
-        displayValue = value ? 'SÍ' : 'NO';
-        break;
-      case 'id':
-        displayValue = value || 'N/A';
+        displayValue = value ? 'Sí' : 'NO';
         break;
       default:
         displayValue = value || 'No especificado';
@@ -125,7 +113,6 @@ const UsuarioDetailModal = ({
     );
   };
 
-  // Estado de carga
   const renderLoading = () => (
     <div className={styles.loadingContainer}>
       <div className={styles.spinner}></div>
@@ -133,7 +120,6 @@ const UsuarioDetailModal = ({
     </div>
   );
 
-  // Estado de error
   const renderError = () => (
     <div className={styles.errorContainer}>
       <div className={styles.errorIcon}>⚠️</div>
@@ -150,41 +136,20 @@ const UsuarioDetailModal = ({
     </div>
   );
 
-  // Contenido principal del modal
   const renderContent = () => {
     if (loading) return renderLoading();
     if (error) return renderError();
     if (!usuarioData) return null;
 
-    // Obtener información de lookups
     const jerarquia = getLookup('jerarquias', usuarioData.jerarquiaId);
     const destino = getLookup('destinos', usuarioData.destinoId);
     const nivel = getLookup('niveles', usuarioData.nivelId);
-    const alcance = getLookup('alcances', usuarioData.alcanceId);
     const cuerpo = getLookup('cuerpos', usuarioData.idCuerpo);
     const escalafon = getLookup('escalafones', usuarioData.idEscalafon);
+    const tipoClasificacion = getLookup('tiposClasificacion', usuarioData.idTipoClasificacion);
 
     return (
       <div className={styles.contentGrid}>
-        {/* SECCIÓN: Datos de Acceso */}
-        <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>
-            <i className='bx bx-user-circle'></i>
-            Datos de Acceso
-          </h3>
-          <div className={styles.sectionContent}>
-            <InfoRow 
-              label="Usuario (Logon)" 
-              value={usuarioData.userName || usuarioData.logon} 
-            />
-            <InfoRow 
-              label="ID Usuario" 
-              value={usuarioData.id || usuarioData.idUsuarioMinidoc}
-              type="id"
-            />
-          </div>
-        </div>
-
         {/* SECCIÓN: Datos Personales */}
         <div className={styles.section}>
           <h3 className={styles.sectionTitle}>
@@ -216,64 +181,42 @@ const UsuarioDetailModal = ({
           <div className={styles.sectionContent}>
             <InfoRow 
               label="Jerarquía" 
-              value={jerarquia ? `${jerarquia.nombre}${jerarquia.iniciales ? ` (${jerarquia.iniciales})` : ''}` : getLookupName('jerarquias', usuarioData.jerarquiaId)}
+              value={jerarquia ? `${jerarquia.letra || ''} - ${jerarquia.detalle || jerarquia.nombre || ''}`.trim() : getLookupName('jerarquias', usuarioData.jerarquiaId)}
             />
             <InfoRow 
               label="Destino" 
-              value={destino ? `${destino.nombre}${destino.cuatrigrama ? ` (${destino.cuatrigrama})` : ''}` : getLookupName('destinos', usuarioData.destinoId)}
+              value={destino ? `${destino.nombre || ''}${destino.cuatrigrama ? ` (${destino.cuatrigrama})` : ''}`.trim() : getLookupName('destinos', usuarioData.destinoId)}
             />
+            {usuarioData.idEscalafon && (
+              <InfoRow 
+                label="Escalafón" 
+                value={escalafon ? `${escalafon.letra || ''} - ${escalafon.detalle || escalafon.descripcion || ''}`.trim() : getLookupName('escalafones', usuarioData.idEscalafon)}
+              />
+            )}
+            {usuarioData.idCuerpo && (
+              <InfoRow 
+                label="Cuerpo" 
+                value={cuerpo ? `${cuerpo.sigla || ''} - ${cuerpo.detalle || cuerpo.descripcion || ''}`.trim() : getLookupName('cuerpos', usuarioData.idCuerpo)}
+              />
+            )}
           </div>
         </div>
 
-        {/* SECCIÓN: Cuerpo y Escalafón (solo si existen) */}
-        {(usuarioData.idCuerpo || usuarioData.idEscalafon) && (
-          <div className={styles.section}>
-            <h3 className={styles.sectionTitle}>
-              <i className='bx bx-briefcase'></i>
-              Especialización
-            </h3>
-            <div className={styles.sectionContent}>
-              {usuarioData.idCuerpo && (
-                <InfoRow 
-                  label="Cuerpo" 
-                  value={cuerpo?.descripcion || getLookupName('cuerpos', usuarioData.idCuerpo)}
-                />
-              )}
-              {usuarioData.idEscalafon && (
-                <InfoRow 
-                  label="Escalafón" 
-                  value={escalafon ? `${escalafon.letra || ''} ${escalafon.descripcion || ''}`.trim() : getLookupName('escalafones', usuarioData.idEscalafon)}
-                />
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* SECCIÓN: Nivel y Alcance */}
+        {/* SECCIÓN: Nivel y Permisos */}
         <div className={styles.section}>
           <h3 className={styles.sectionTitle}>
             <i className='bx bx-layer'></i>
-            Nivel y Alcance
+            Nivel y Permisos
           </h3>
           <div className={styles.sectionContent}>
             <InfoRow 
               label="Nivel" 
-              value={nivel?.nombre || getLookupName('niveles', usuarioData.nivelId)}
+              value={nivel?.descripcion || nivel?.nombre || getLookupName('niveles', usuarioData.nivelId)}
             />
             <InfoRow 
-              label="Alcance" 
-              value={alcance?.nombre || getLookupName('alcances', usuarioData.alcanceId)}
+              label="Tipo de Clasificación" 
+              value={tipoClasificacion?.descripcion || tipoClasificacion?.nombre || getLookupName('tiposClasificacion', usuarioData.idTipoClasificacion)}
             />
-          </div>
-        </div>
-
-        {/* SECCIÓN: Permisos Especiales */}
-        <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>
-            <i className='bx bx-lock-alt'></i>
-            Permisos Especiales
-          </h3>
-          <div className={styles.sectionContent}>
             <InfoRow 
               label="Confianza" 
               value={usuarioData.confianza} 
@@ -286,17 +229,36 @@ const UsuarioDetailModal = ({
             />
           </div>
         </div>
+
+        {/* SECCIÓN: Datos de Acceso e Información del Sistema */}
+        <div className={styles.section}>
+          <h3 className={styles.sectionTitle}>
+            <i className='bx bx-info-circle'></i>
+            Datos de Acceso e Información del Sistema
+          </h3>
+          <div className={styles.sectionContent}>
+            <InfoRow 
+              label="Usuario" 
+              value={usuarioData.logon} 
+            />
+            <InfoRow 
+              label="Fecha de Creación" 
+              value={usuarioData.fechaCreacion ? new Date(usuarioData.fechaCreacion).toLocaleString('es-AR') : 'No disponible'}
+            />
+          </div>
+        </div>
       </div>
     );
   };
 
-  // No renderizar nada si no está abierto
-  if (!isOpen) return null;
+  if (!isOpen && !isClosing) return null;
 
   return (
-    <div className={styles.modalOverlay} onClick={handleOverlayClick}>
+    <div 
+      className={`${styles.modalOverlay} ${isClosing ? styles.closing : ''}`}
+      onClick={handleOverlayClick}
+    >
       <div className={styles.modalContainer}>
-        {/* Header del Modal */}
         <div className={styles.modalHeader}>
           <div className={styles.headerContent}>
             <div className={styles.headerIcon}>
@@ -311,7 +273,7 @@ const UsuarioDetailModal = ({
               </h2>
               {usuarioData && (
                 <span className={styles.headerSubtitle}>
-                  Usuario: {usuarioData.userName || usuarioData.logon} | MR: {usuarioData.matriculaRevista}
+                  Usuario: {usuarioData.logon} | MR: {usuarioData.matriculaRevista}
                 </span>
               )}
             </div>
@@ -325,7 +287,6 @@ const UsuarioDetailModal = ({
           </button>
         </div>
 
-        {/* Body del Modal */}
         <div className={styles.modalBody}>
           {renderContent()}
         </div>

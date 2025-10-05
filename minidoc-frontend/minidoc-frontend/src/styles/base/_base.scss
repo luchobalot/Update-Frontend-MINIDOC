@@ -11,8 +11,8 @@ body {
     color: $text-color;
     background: $bg-body;
     line-height: 1.6;
-    overflow-x: hidden; // Solo bloquear scroll horizontal
-    // overflow: hidden;
+    overflow-x: hidden; 
+    overflow-y: auto;   
 }
 
 // ==================== ELEMENTOS BÁSICOS ====================
@@ -96,4 +96,32 @@ p {
 *:focus-visible {
     outline: 2px solid $primary-color;
     outline-offset: 2px;
+}
+
+// ==================== FIX AUTOCOMPLETE STYLES ====================
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+select:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px $bg-input inset !important;
+    -webkit-text-fill-color: $text-color !important;
+    box-shadow: 0 0 0 1000px $bg-input inset !important;
+    caret-color: $text-color !important;
+    border-color: $border-color !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+// Para cuando el input tiene focus
+input:-webkit-autofill:focus,
+select:-webkit-autofill:focus,
+textarea:-webkit-autofill:focus {
+    border-color: $primary-color !important;
 }
